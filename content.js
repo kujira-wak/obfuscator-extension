@@ -62,19 +62,25 @@
   }
 
   // ── ラッピング ──────────────────────────────────────────────
-  function wrapTargets(root, targets) {
+  function wrapTargets(root, targets, ignoreCase = false) {
     if (!targets.length) return;
     if (root.nodeType === Node.ELEMENT_NODE && root.hasAttribute('data-obf-span')) return;
 
     for (const textNode of collectTextNodes(root)) {
       const text = textNode.textContent;
+      const haystack = ignoreCase ? text.toLowerCase() : text;
       const matches = [];
       for (const t of targets) {
+        const needle = ignoreCase ? t.toLowerCase() : t;
         let pos = 0;
         while (pos < text.length) {
-          const idx = text.indexOf(t, pos);
+          const idx = haystack.indexOf(needle, pos);
           if (idx === -1) break;
-          matches.push({ index: idx, end: idx + t.length, original: t });
+          matches.push({
+            index: idx,
+            end: idx + t.length,
+            original: text.slice(idx, idx + t.length),
+          });
           pos = idx + t.length;
         }
       }
@@ -147,7 +153,7 @@
   function pauseObserver()  { observerPaused = true;  }
   function resumeObserver() { observerPaused = false; }
 
-  function startObserver(targets) {
+  function startObserver(targets, ignoreCase = false) {
     if (observer) observer.disconnect();
     observer = new MutationObserver(mutations => {
       if (observerPaused) return;
@@ -162,7 +168,7 @@
       debounceTimer = setTimeout(() => {
         const batch = [...new Set(pendingNodes)]; pendingNodes = [];
         for (const node of batch) {
-          if (document.contains(node)) wrapTargets(node, targets);
+          if (document.contains(node)) wrapTargets(node, targets, ignoreCase);
         }
       }, 120);
     });
@@ -178,16 +184,22 @@
   function applySettings(settings) {
     stopAnimation(); stopObserver(); unwrapAll();
 
+    const ignoreCase = settings?.ignoreCase === true;
     const targets = (settings?.targets ?? [])
       .map(t => (typeof t === 'string' ? t.trim() : ''))
       .filter(t => t.length > 0 && t.length <= 100)
+      .filter((t, idx, arr) => {
+        if (!ignoreCase) return arr.indexOf(t) === idx;
+        const lower = t.toLowerCase();
+        return arr.findIndex(v => v.toLowerCase() === lower) === idx;
+      })
       .slice(0, 30);
 
     if (settings?.enabled === false || !targets.length) return;
 
-    wrapTargets(document.body, targets);
+    wrapTargets(document.body, targets, ignoreCase);
     startAnimation();
-    startObserver(targets);
+    startObserver(targets, ignoreCase);
   }
 
   // ── 起動: 暗号化ストレージから復元 ─────────────────────────

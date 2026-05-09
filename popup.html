@@ -79,6 +79,20 @@
       margin-bottom: 7px;
     }
 
+    .option-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 6px 0 14px;
+    }
+
+    .option-row label {
+      font-size: 12px;
+      color: #bbb;
+      cursor: pointer;
+    }
+
     .section-label {
       font-size: 10px;
       color: #999;
@@ -225,6 +239,13 @@
   <div class="words-header">
     <span class="section-label" id="wordsLabel"></span>
     <button id="maskBtn" aria-pressed="false"></button>
+  </div>
+  <div class="option-row">
+    <label for="ignoreCaseToggle" id="ignoreCaseLabel"></label>
+    <label class="toggle">
+      <input type="checkbox" id="ignoreCaseToggle">
+      <span class="knob"></span>
+    </label>
   </div>
   <div id="wordsList" role="list"></div>
   <button id="addBtn"></button>

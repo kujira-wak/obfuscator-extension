@@ -15,6 +15,7 @@ const T = {
   maskOff:      isJa ? '👁 表示'                          : '👁 Show',
   addBtn:       isJa ? '＋ 追加'                          : '＋ Add word',
   applyBtn:     isJa ? 'ページに適用'                      : 'Apply to page',
+  ignoreCase:   isJa ? '大文字小文字を無視'               : 'Ignore case',
   applied:      isJa ? '適用しました'                      : 'Applied',
   reloadMsg:    isJa ? 'ページを再読み込みしてください'    : 'Please reload the page',
   saveErr:      isJa ? '保存できませんでした'              : 'Failed to save',
@@ -104,12 +105,14 @@ const wordsList    = $('wordsList');
 const addBtn       = $('addBtn');
 const applyBtn     = $('applyBtn');
 const enableToggle = $('enableToggle');
+const ignoreCaseToggle = $('ignoreCaseToggle');
 const maskBtn      = $('maskBtn');
 const statusEl     = $('status');
 const previewEl    = $('preview');
 
 $('toggleLabel').textContent = T.toggleLabel;
 $('wordsLabel').textContent  = T.wordsLabel;
+$('ignoreCaseLabel').textContent = T.ignoreCase;
 addBtn.textContent            = T.addBtn;
 applyBtn.textContent          = T.applyBtn;
 $('footerText').textContent   = T.footer;
@@ -187,7 +190,11 @@ applyBtn.addEventListener('click', async () => {
   const raw     = getWords();
   const targets = [...new Set(raw)].slice(0, MAX_WORDS);
   const hadDup  = targets.length < raw.length;
-  const settings = { targets, enabled: enableToggle.checked };
+  const settings = {
+    targets,
+    enabled: enableToggle.checked,
+    ignoreCase: ignoreCaseToggle.checked,
+  };
 
   // AES-GCM 暗号化して storage.local に保存
   try {
@@ -226,6 +233,7 @@ function showStatus(msg) {
 // ── 起動時に暗号化ストレージから復元 ───────────────────────
 CryptoUtils.loadSettings().then(data => {
   enableToggle.checked = data?.enabled !== false;
+  ignoreCaseToggle.checked = data?.ignoreCase === true;
   const list = Array.isArray(data?.targets) && data.targets.length
     ? data.targets : [''];
   list.forEach(t => addWordRow(typeof t === 'string' ? t : ''));
