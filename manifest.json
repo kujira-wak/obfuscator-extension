@@ -5,6 +5,12 @@
   "version": "1.1.0",
   "default_locale": "en",
   "minimum_chrome_version": "109",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "obfuscator@kujira-wak.dev",
+      "strict_min_version": "128.0"
+    }
+  },
   "permissions": [
     "storage",
     "activeTab",
