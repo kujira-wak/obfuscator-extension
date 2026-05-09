@@ -196,7 +196,7 @@ applyBtn.addEventListener('click', async () => {
     showStatus(T.saveErr); return;
   }
 
-  // 現在のタブに平文で送信（拡張機能内部通信のみ）
+  // 既に注入済みなら即反映、未注入なら activeTab で必要時のみ注入する
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab?.id) return;
 
@@ -209,7 +209,6 @@ applyBtn.addEventListener('click', async () => {
   } catch {
     try {
       await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['crypto-utils.js', 'content.js'] });
-      await send();
       showStatus(hadDup ? T.dupRemoved : T.applied);
     } catch {
       showStatus(T.reloadMsg);

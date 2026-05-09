@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_extName__",
   "description": "__MSG_extDescription__",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "default_locale": "en",
   "minimum_chrome_version": "109",
   "permissions": [
@@ -20,18 +20,6 @@
       "32": "icons/icon32.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
-    }
-  },
-  "content_scripts": [
-    {
-      "matches": [
-        "<all_urls>"
-      ],
-      "js": [
-        "crypto-utils.js",
-        "content.js"
-      ],
-      "run_at": "document_idle"
     }
   ],
   "icons": {
