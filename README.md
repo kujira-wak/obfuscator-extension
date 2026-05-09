@@ -37,6 +37,9 @@
 ## 機能
 
 - 指定したキーワードをランダムな記号に変化させ続ける（リアルタイム更新）
+- Slack / Gmail / Docs 向けのサイト別プロファイル
+- キーボードショートカットで ON/OFF と適用を素早く操作
+- ページ内容から候補キーワードを自動抽出
 - 大文字小文字を無視して一致させるモードに対応
 - SPA・動的コンテンツにも自動追従（MutationObserver）
 - `<input>` `<textarea>` `contenteditable` などの入力欄には一切干渉しない
@@ -72,6 +75,7 @@ obfuscator-extension/
 ├── manifest.json       # 拡張機能定義 (Manifest V3)
 ├── content.js          # ページへの注入スクリプト
 ├── crypto-utils.js     # AES-GCM 暗号化ユーティリティ
+├── background.js       # ホットキー処理用 service worker
 ├── popup.html          # ポップアップ UI
 ├── popup.js            # ポップアップロジック
 ├── icons/              # アイコン (16 / 32 / 48 / 128px)

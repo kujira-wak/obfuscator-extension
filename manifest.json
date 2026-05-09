@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_extName__",
   "description": "__MSG_extDescription__",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "default_locale": "en",
   "minimum_chrome_version": "109",
   "permissions": [
@@ -10,6 +10,25 @@
     "activeTab",
     "scripting"
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "toggle-obfuscation": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+O",
+        "mac": "Command+Shift+O"
+      },
+      "description": "Toggle obfuscation for the active profile"
+    },
+    "apply-obfuscation": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Apply the active profile to the current tab"
+    }
+  },
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'none';"
   },

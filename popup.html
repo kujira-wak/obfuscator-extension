@@ -93,6 +93,31 @@
       cursor: pointer;
     }
 
+    .profile-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 4px 0 12px;
+    }
+
+    .profile-row select {
+      flex: 1;
+      min-width: 0;
+      background: #1c1c1c;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 7px 9px;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .profile-row .site-note {
+      flex: 0 0 auto;
+      color: #666;
+      font-size: 10px;
+    }
+
     .section-label {
       font-size: 10px;
       color: #999;
@@ -161,7 +186,8 @@
     .rm:hover { color: #fff; }
 
     /* ── 追加ボタン ── */
-    #addBtn {
+    #addBtn,
+    #suggestBtn {
       background: none;
       border: none;
       color: #999;
@@ -171,7 +197,8 @@
       margin-bottom: 16px;
       transition: color 0.15s;
     }
-    #addBtn:hover { color: #fff; }
+    #addBtn:hover,
+    #suggestBtn:hover { color: #fff; }
 
     /* ── 適用ボタン ── */
     #applyBtn {
@@ -247,7 +274,12 @@
       <span class="knob"></span>
     </label>
   </div>
+  <div class="profile-row">
+    <select id="profileSelect" aria-label="Profile"></select>
+    <span class="site-note" id="siteNote"></span>
+  </div>
   <div id="wordsList" role="list"></div>
+  <button id="suggestBtn"></button>
   <button id="addBtn"></button>
 
   <button id="applyBtn"></button>
