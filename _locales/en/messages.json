@@ -1,0 +1,8 @@
+{
+  "extName": {
+    "message": "Obfuscator"
+  },
+  "extDescription": {
+    "message": "Scrambles chosen words on any webpage into random symbols. Toggle on/off anytime. Your settings are stored locally on your device."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "extName": {
+    "message": "Obfuscator"
+  },
+  "extDescription": {
+    "message": "指定した文字・単語をページ上でランダムな記号に変化させます。いつでも ON/OFF 切り替え可能。設定はデバイス内にのみ保存されます。"
+  }
+}

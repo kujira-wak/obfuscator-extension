@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Obfuscator</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 280px;
+      background: #111;
+      color: #fff;
+      font-family: 'Segoe UI', 'Yu Gothic UI', system-ui, -apple-system, sans-serif;
+      font-size: 13px;
+      line-height: 1.4;
+      padding: 18px 18px 14px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── スプラッシュ ── */
+    #splash {
+      font-size: 10px;
+      color: #bbb;
+      min-height: 15px;
+      margin-bottom: 13px;
+      letter-spacing: 0.2px;
+    }
+
+    /* ── タイトル行 ── */
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .title {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      cursor: default;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* ── ON/OFFトグル ── */
+    .toggle-wrap { display: flex; align-items: center; gap: 8px; }
+    .toggle-wrap label { font-size: 12px; color: #bbb; cursor: pointer; }
+
+    .toggle { position: relative; width: 38px; height: 20px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+    .knob {
+      position: absolute; inset: 0;
+      background: #2c2c2c;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    .knob::before {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      left: 3px; top: 3px;
+      background: #888;
+      border-radius: 50%;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .toggle input:checked + .knob::before {
+      transform: translateX(18px);
+      background: #fff;
+    }
+
+    /* ── キーワードヘッダー ── */
+    .words-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 7px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    #maskBtn {
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 11px;
+      cursor: pointer;
+      padding: 2px 0;
+      transition: color 0.15s;
+      line-height: 1;
+    }
+    #maskBtn:hover { color: #fff; }
+
+    /* ── 単語リスト ── */
+    #wordsList {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 6px;
+      max-height: 156px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    #wordsList::-webkit-scrollbar { width: 2px; }
+    #wordsList::-webkit-scrollbar-thumb { background: #2c2c2c; border-radius: 2px; }
+
+    .word-row { display: flex; align-items: center; gap: 5px; }
+
+    /* type="text" / "password" 両方に効くようクラスで指定 */
+    .word-input {
+      flex: 1;
+      min-width: 0;
+      background: #1c1c1c;
+      border: none;
+      border-radius: 5px;
+      padding: 7px 9px;
+      color: #fff;
+      font-size: 13px;
+      font-family: 'Consolas', 'Menlo', monospace;
+      outline: none;
+      transition: background 0.15s;
+      /* Chrome のオートフィル青を上書き */
+      -webkit-text-fill-color: #fff;
+      caret-color: #fff;
+    }
+    .word-input:focus { background: #222; }
+    .word-input::placeholder { color: #666; }
+
+    .rm {
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 15px;
+      cursor: pointer;
+      padding: 4px 5px;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+    .rm:hover { color: #fff; }
+
+    /* ── 追加ボタン ── */
+    #addBtn {
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 5px 0;
+      margin-bottom: 16px;
+      transition: color 0.15s;
+    }
+    #addBtn:hover { color: #fff; }
+
+    /* ── 適用ボタン ── */
+    #applyBtn {
+      width: 100%;
+      background: #fff;
+      color: #111;
+      border: none;
+      border-radius: 6px;
+      padding: 9px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    #applyBtn:hover  { opacity: 0.85; }
+    #applyBtn:active { opacity: 0.7;  }
+
+    /* ── ステータス ── */
+    #status {
+      font-size: 11px;
+      color: #bbb;
+      text-align: center;
+      margin-top: 6px;
+      height: 14px;
+    }
+
+    /* ── プレビュー ── */
+    #preview {
+      margin-top: 16px;
+      background: #1c1c1c;
+      border-radius: 5px;
+      padding: 9px 11px;
+      font-family: 'Consolas', 'Menlo', monospace;
+      font-size: 12px;
+      color: #fff;
+      min-height: 34px;
+      letter-spacing: 0.5px;
+      word-break: break-all;
+    }
+
+    /* ── フッター ── */
+    .footer {
+      margin-top: 12px;
+      font-size: 10px;
+      color: #666;
+      text-align: center;
+      letter-spacing: 0.2px;
+    }
+  </style>
+</head>
+<body>
+  <div id="splash" aria-live="polite"></div>
+
+  <div class="title-row">
+    <span class="title">Obfuscator</span>
+    <div class="toggle-wrap">
+      <label for="enableToggle" id="toggleLabel"></label>
+      <label class="toggle">
+        <input type="checkbox" id="enableToggle" checked aria-labelledby="toggleLabel">
+        <span class="knob"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="words-header">
+    <span class="section-label" id="wordsLabel"></span>
+    <button id="maskBtn" aria-pressed="false"></button>
+  </div>
+  <div id="wordsList" role="list"></div>
+  <button id="addBtn"></button>
+
+  <button id="applyBtn"></button>
+  <div id="status" role="status" aria-live="polite"></div>
+
+  <div id="preview" aria-hidden="true"></div>
+
+  <p class="footer" id="footerText"></p>
+
+  <script src="crypto-utils.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
