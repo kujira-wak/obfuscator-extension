@@ -213,6 +213,36 @@
     if (msg?.type === 'UPDATE_SETTINGS') {
       applySettings(msg.settings ?? {});
       sendResponse({ ok: true });
+    } else if (msg?.type === 'CHECK_KEYWORDS') {
+      const keywords = msg.keywords ?? [];
+      const ignoreCase = msg.ignoreCase === true;
+      const found = [];
+
+      const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+      );
+
+      const seen = new Set();
+      let node;
+      while (node = walker.nextNode()) {
+        if (!node.textContent.trim()) continue;
+        const text = node.textContent;
+        for (const keyword of keywords) {
+          if (seen.has(keyword)) continue;
+          const match = ignoreCase
+            ? text.toLowerCase().includes(keyword.toLowerCase())
+            : text.includes(keyword);
+          if (match) {
+            found.push(keyword);
+            seen.add(keyword);
+          }
+        }
+      }
+
+      sendResponse({ found });
     }
     return false;
   });

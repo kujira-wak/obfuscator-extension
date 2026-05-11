@@ -268,6 +268,53 @@
       text-align: center;
       letter-spacing: 0.2px;
     }
+
+    /* ── 設定パネル ── */
+    .settings-section {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #2c2c2c;
+    }
+
+    .settings-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #999;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .settings-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      padding: 6px 0;
+    }
+
+    .settings-item label {
+      font-size: 11px;
+      color: #aaa;
+      flex: 1;
+    }
+
+    .settings-item button {
+      background: #2c2c2c;
+      border: 1px solid #3c3c3c;
+      color: #999;
+      padding: 4px 8px;
+      border-radius: 3px;
+      font-size: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .settings-item button:hover {
+      background: #1c1c1c;
+      color: #fff;
+      border-color: #555;
+    }
   </style>
 </head>
 <body>
@@ -308,6 +355,20 @@
   <div id="preview" aria-hidden="true"></div>
 
   <p class="footer" id="footerText"></p>
+
+  <div class="settings-section">
+    <div class="settings-title" id="settingsTitle"></div>
+    
+    <div class="settings-item">
+      <label id="hotkeyLabel"></label>
+      <span style="font-family: monospace; font-size: 10px; color: #22c55e; background: #2c2c2c; padding: 3px 6px; border-radius: 3px;" id="hotkeyDisplay">Ctrl+Shift+O</span>
+    </div>
+
+    <div class="settings-item">
+      <label id="screenshotLabel"></label>
+      <button id="screenshotCheckBtn"></button>
+    </div>
+  </div>
 
   <script src="crypto-utils.js"></script>
   <script src="popup.js"></script>
