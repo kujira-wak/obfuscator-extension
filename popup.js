@@ -147,7 +147,6 @@ const PLEN = PREVIEW_CHARS.length;
 const $ = id => document.getElementById(id);
 const wordsList = $('wordsList');
 const addBtn = $('addBtn');
-const suggestBtn = $('suggestBtn');
 const applyBtn = $('applyBtn');
 const enableToggle = $('enableToggle');
 const ignoreCaseToggle = $('ignoreCaseToggle');
@@ -161,7 +160,6 @@ $('toggleLabel').textContent = T.toggleLabel;
 $('wordsLabel').textContent = T.wordsLabel;
 $('ignoreCaseLabel').textContent = T.ignoreCase;
 addBtn.textContent = T.addBtn;
-suggestBtn.textContent = T.suggestBtn;
 applyBtn.textContent = T.applyBtn;
 $('footerText').textContent = T.footer;
 
@@ -303,61 +301,6 @@ function mergeCandidates(existing, additions, ignoreCase) {
   return merged;
 }
 
-async function scanPageCandidates() {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab?.id) return [];
-
-  const [{ result } = { result: [] }] = await chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    func: pageCandidateScan,
-  });
-  return Array.isArray(result) ? result : [];
-}
-
-function pageCandidateScan() {
-  const text = (document.body?.innerText || document.documentElement?.innerText || '').replace(/\s+/g, ' ');
-  if (!text.trim()) return [];
-
-  const stopWords = new Set([
-    'the','and','for','with','this','that','from','your','you','are','was','were','have','has','had','not','but','can',
-    'all','any','our','out','use','using','into','about','page','home','menu','more','less','click','open','close',
-    'https','http','www','com','org','net','gmail','slack','docs','google',
-  ]);
-
-  const counts = new Map();
-  const add = (value, score = 1) => {
-    const s = value.trim().replace(/\s+/g, ' ');
-    if (s.length < 3 || s.length > 80) return;
-    if (/^\d+$/.test(s)) return;
-    if (stopWords.has(s.toLowerCase())) return;
-    counts.set(s, (counts.get(s) ?? 0) + score);
-  };
-
-  const emailRe = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g;
-  for (const m of text.matchAll(emailRe)) {
-    const email = m[0];
-    add(email, 3);
-    add(email.split('@')[0], 2);
-  }
-
-  const tokenRe = /\b[A-Za-z][A-Za-z0-9_-]{2,}\b/g;
-  for (const m of text.matchAll(tokenRe)) {
-    const s = m[0];
-    if (stopWords.has(s.toLowerCase())) continue;
-    if (/[A-Z]/.test(s) || /\d/.test(s) || /[_-]/.test(s) || (s[0] === s[0].toUpperCase() && s.slice(1) !== s.slice(1).toLowerCase())) {
-      add(s);
-    }
-  }
-
-  const idRe = /\b[A-Za-z0-9]{4,}[-_][A-Za-z0-9_-]{2,}\b/g;
-  for (const m of text.matchAll(idRe)) add(m[0], 2);
-
-  return [...counts.entries()]
-    .sort((a, b) => b[1] - a[1] || b[0].length - a[0].length)
-    .map(([s]) => s)
-    .slice(0, 10);
-}
-
 async function applySettingsToTab(settings) {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab?.id) return false;
@@ -379,26 +322,6 @@ async function applySettingsToTab(settings) {
 }
 
 addBtn.addEventListener('click', () => addWordRow('', true));
-
-suggestBtn.addEventListener('click', async () => {
-  try {
-    const suggestions = await scanPageCandidates();
-    if (!suggestions.length) {
-      showStatus(T.noSuggestions);
-      return;
-    }
-
-    stashCurrentProfile();
-    const profile = getCurrentProfile();
-    const merged = mergeCandidates(profile.targets, suggestions, profile.ignoreCase);
-    profile.targets = merged;
-    profileDrafts[currentProfileId] = profile;
-    renderProfileToUI(currentProfileId);
-    showStatus(T.addedSuggest);
-  } catch {
-    showStatus(T.reloadMsg);
-  }
-});
 
 profileSelect.addEventListener('change', () => switchProfile(profileSelect.value));
 maskBtn.addEventListener('click', () => { masked = !masked; applyMask(); });
