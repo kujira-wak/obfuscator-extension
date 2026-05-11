@@ -5,6 +5,17 @@ importScripts('crypto-utils.js');
 const MAX_WORDS = 30;
 const PROFILE_IDS = ['default', 'slack', 'gmail', 'docs'];
 
+const RECOMMENDED_KEYWORDS = {
+  ja: [
+    '名前', '住所', 'メール', '電話', '社員ID', 'パスワード',
+    '給与', 'SSN', '口座番号', '顧客名', 'プロジェクト名'
+  ],
+  en: [
+    'Name', 'Address', 'Email', 'Phone', 'Employee ID', 'Password',
+    'Salary', 'SSN', 'Account Number', 'Customer Name', 'Project Name'
+  ]
+};
+
 function createEmptyProfile() {
   return { targets: [], enabled: true, ignoreCase: false };
 }
@@ -78,6 +89,12 @@ async function loadActiveProfile() {
   const profileId = getProfileIdFromHost(host);
   return { tab, data, profileId, profile: data.profiles[profileId] };
 }
+
+chrome.runtime.onInstalled.addListener(details => {
+  if (details.reason === 'install') {
+    chrome.tabs.create({ url: 'onboarding.html' });
+  }
+});
 
 chrome.commands.onCommand.addListener(async command => {
   const ctx = await loadActiveProfile();
