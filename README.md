@@ -1,9 +1,10 @@
-# Obfuscator
+# Obfuscator (Firefox)
 
-**画面共有中に見せたくない文字を、その場でランダムな記号に変化させるChrome拡張機能。**
+**画面共有中に見せたくない文字を、その場でランダムな記号に変化させるFirefox拡張機能。**
 
-![Chrome Web Store](https://img.shields.io/badge/Chrome-Extension-4285F4?logo=googlechrome&logoColor=white)
+![Firefox Browser](https://img.shields.io/badge/Firefox-Extension-FF7139?logo=firefox&logoColor=white)
 ![Manifest V3](https://img.shields.io/badge/Manifest-V3-green)
+![Alpha](https://img.shields.io/badge/Status-Alpha-orange)
 
 ---
 
@@ -51,20 +52,53 @@
 ## プライバシー・セキュリティ
 
 - キーワードは **AES-GCM 256bit で暗号化** してデバイス内にのみ保存
-- `chrome.storage.sync`（Google クラウド同期）は使用しない
+- ブラウザのクラウド同期機能は使用しない
 - 外部サーバーへの通信は一切なし
+- Firefox のプライベートブラウジングモード対応
+
+---
+
+## Firefox Alpha について
+
+このバージョンは **Alpha** です。以下の点にご注意ください：
+
+- **完全なテストはまだ行われていません** → bug report をお待ちしています
+- **最新の Chrome 版と同じ機能** を実装していますが、Firefox 固有の問題が存在する可能性があります
+- **定期的に更新される** 予定です
+
+### 既知の問題
+
+- 一部のサイト（iframe 内）では動作しない可能性があります
+- Firefox 128.0 未満では動作しません
+
+### bug report / feature request
+
+問題が見つかった場合は、GitHub Issues で報告をお願いします：
+https://github.com/kujira-wak/obfuscator-extension/issues
 
 ---
 
 ## インストール（開発版）
 
 ```bash
-git clone https://github.com/kujira-wak/obfuscator-extension.git
+git clone -b firefox-alpha https://github.com/kujira-wak/obfuscator-extension.git
+cd obfuscator-extension
 ```
 
-1. Chrome で `chrome://extensions` を開く
-2. 右上の **「デベロッパーモード」** をON
-3. **「パッケージ化されていない拡張機能を読み込む」** → クローンしたフォルダを選択
+### Firefox での読み込み
+
+1. Firefox アドレスバーに `about:debugging#/runtime/this-firefox` を入力
+2. **「一時的なアドオンを読み込む」** をクリック
+3. クローンしたフォルダの `manifest.json` を選択
+
+> **注意**: 一時的なアドオンのため、Firefox 再起動時に削除されます。
+> 恒久的なインストールは、Firefox ESR や他の開発環境を使用してください。
+
+### Firefox でのテスト・デバッグ
+
+1. `about:debugging` でアドオンを選択
+2. **「Inspect」** をクリックして Developer Tools を開く
+3. Console タブでエラーを確認可能
 
 ---
 
