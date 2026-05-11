@@ -27,6 +27,7 @@
       border-radius: 12px;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
       overflow: hidden;
+      position: relative;
     }
 
     .header {
@@ -273,6 +274,25 @@
       color: #999;
       margin-bottom: 20px;
     }
+
+    .btn-skip {
+      position: absolute;
+      top: 15px;
+      right: 30px;
+      background: transparent;
+      color: #999;
+      border: 1px solid #3c3c3c;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-skip:hover {
+      color: #ccc;
+      border-color: #555;
+    }
   </style>
 </head>
 <body>
@@ -288,6 +308,8 @@
       </div>
 
       <div class="step-indicator" id="stepIndicator"></div>
+
+      <button class="btn-skip" onclick="skipAll()">Skip Setup</button>
 
       <!-- Step 1: Welcome -->
       <div class="step active" id="step-1">

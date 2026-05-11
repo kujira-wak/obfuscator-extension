@@ -223,6 +223,23 @@ function prevStep() {
   }
 }
 
+async function skipAll() {
+  if (confirm('Setup をスキップしますか？\n後からポップアップで設定できます。')) {
+    const settings = {
+      profiles: {
+        default: { targets: [], enabled: true, ignoreCase: false },
+        slack: { targets: [], enabled: true, ignoreCase: false },
+        gmail: { targets: [], enabled: true, ignoreCase: false },
+        docs: { targets: [], enabled: true, ignoreCase: false }
+      },
+      screenshotWarning: false
+    };
+    await CryptoUtils.saveSettings(settings);
+    localStorage.setItem('obfuscator_onboarding_complete', 'true');
+    window.close();
+  }
+}
+
 async function finish() {
   const defaultProfile = {
     targets: [...selectedKeywords],
