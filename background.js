@@ -97,3 +97,27 @@ chrome.commands.onCommand.addListener(async command => {
     await ensureApplied(ctx.tab.id, ctx.profile);
   }
 });
+
+chrome.tabs.onActivated.addListener(async info => {
+  const tabId = info.tabId;
+  const tab = await new Promise(resolve => {
+    chrome.tabs.get(tabId, tab => resolve(tab ?? null));
+  });
+
+  if (!tab || !tab.url) return;
+
+  let host = '';
+  try {
+    host = new URL(tab.url).hostname;
+  } catch {
+    return;
+  }
+
+  const profileId = getProfileIdFromHost(host);
+  const data = normalizeSettings(await CryptoUtils.loadSettings());
+  const profile = data.profiles[profileId];
+
+  if (profile && profile.enabled && profile.targets.length > 0) {
+    await ensureApplied(tabId, profile);
+  }
+});
