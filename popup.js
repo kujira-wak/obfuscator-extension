@@ -32,6 +32,12 @@ const T = {
   placeholder:  isJa ? '隠したい文字・単語を入力' : 'text you want to hide …',
   footer:       isJa ? '設定はこのデバイスにのみ保存されます（暗号化）'
                      : 'Settings are encrypted and stored locally only',
+  settingsTitle: isJa ? '設定' : 'Settings',
+  hotkeyLabel:  isJa ? 'ホットキー' : 'Hotkey',
+  screenshotLabel: isJa ? 'スクリーンショット警告' : 'Screenshot Warning',
+  screenshotCheckBtn: isJa ? 'チェック' : 'Check',
+  screenshotWarning: isJa ? '⚠ 隠されていないキーワード:' : '⚠ Unmasked keywords:',
+  nothingFound: isJa ? '大丈夫です！' : 'All good!',
 };
 
 const HOLIDAYS = {
@@ -379,8 +385,45 @@ async function bootstrap() {
   settingsData = normalizeSettings(data);
   profileDrafts = clone(settingsData.profiles);
 
+  document.getElementById('settingsTitle').textContent = T.settingsTitle;
+  document.getElementById('hotkeyLabel').textContent = T.hotkeyLabel;
+  document.getElementById('screenshotLabel').textContent = T.screenshotLabel;
+  document.getElementById('screenshotCheckBtn').textContent = T.screenshotCheckBtn;
+
+  document.getElementById('screenshotCheckBtn').addEventListener('click', checkScreenshot);
+
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   loadInitialProfile(tab?.url ?? '');
+}
+
+async function checkScreenshot() {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab?.id) {
+    showStatus(isJa ? 'タブが見つかりません' : 'Tab not found');
+    return;
+  }
+
+  const profile = getCurrentProfile();
+  if (!profile.targets.length) {
+    showStatus(isJa ? 'キーワードが設定されていません' : 'No keywords set');
+    return;
+  }
+
+  try {
+    const result = await chrome.tabs.sendMessage(tab.id, {
+      type: 'CHECK_KEYWORDS',
+      keywords: profile.targets,
+      ignoreCase: profile.ignoreCase
+    });
+
+    if (result.found.length > 0) {
+      showStatus(`${T.screenshotWarning}\n${result.found.join(', ')}`);
+    } else {
+      showStatus(T.nothingFound);
+    }
+  } catch {
+    showStatus(isJa ? 'ページをリロードしてください' : 'Please reload page');
+  }
 }
 
 bootstrap();
