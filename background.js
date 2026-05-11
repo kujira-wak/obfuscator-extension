@@ -6,14 +6,22 @@ const MAX_WORDS = 30;
 const PROFILE_IDS = ['default', 'slack', 'gmail', 'docs'];
 
 const RECOMMENDED_KEYWORDS = {
-  ja: [
-    '名前', '住所', 'メール', '電話', '社員ID', 'パスワード',
-    '給与', 'SSN', '口座番号', '顧客名', 'プロジェクト名'
-  ],
-  en: [
-    'Name', 'Address', 'Email', 'Phone', 'Employee ID', 'Password',
-    'Salary', 'SSN', 'Account Number', 'Customer Name', 'Project Name'
-  ]
+  ja: {
+    work: [
+      '名前', '社員ID', 'パスワード', '給与', 'SSN', '口座番号', '顧客名', 'プロジェクト名'
+    ],
+    sns: [
+      '本名', '住所', 'メールアドレス', '電話番号', 'SNS ID', 'アカウント番号', '誕生日'
+    ]
+  },
+  en: {
+    work: [
+      'Name', 'Employee ID', 'Password', 'Salary', 'SSN', 'Account Number', 'Customer Name', 'Project Name'
+    ],
+    sns: [
+      'Real Name', 'Address', 'Email', 'Phone', 'Social Media ID', 'Account Number', 'Birthday'
+    ]
+  }
 };
 
 function createEmptyProfile() {
