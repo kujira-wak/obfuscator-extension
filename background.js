@@ -19,7 +19,7 @@ const RECOMMENDED_KEYWORDS = {
       'Name', 'Employee ID', 'Password', 'Salary', 'SSN', 'Account Number', 'Customer Name', 'Project Name'
     ],
     sns: [
-      'Real Name', 'Address', 'Email', 'Phone', 'Social Media ID', 'Account Number', 'Birthday'
+      'Name', 'Address', 'Email', 'Phone', 'Social Media ID', 'Account Number', 'Birthday'
     ]
   }
 };

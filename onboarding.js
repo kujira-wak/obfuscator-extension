@@ -16,7 +16,7 @@ const RECOMMENDED_KEYWORDS = {
       'Name', 'Employee ID', 'Password', 'Salary', 'SSN', 'Account Number', 'Customer Name', 'Project Name'
     ],
     sns: [
-      'Real Name', 'Address', 'Email', 'Phone', 'Social Media ID', 'Account Number', 'Birthday'
+      'Name', 'Address', 'Email', 'Phone', 'Social Media ID', 'Account Number', 'Birthday'
     ]
   }
 };
@@ -34,8 +34,8 @@ const TEXT = {
     'scene-sns': { name: 'SNS・配信向け', desc: 'ネット友達や動画配信など' },
     'note-2': 'シーンに応じて推奨キーワードが変わります。後から変更できます。',
 
-    'step-3': { title: '隠すキーワードを選択', desc: '選択したキーワードはデフォルトプロファイルに登録されます。' },
-    'note-3': '後から追加・削除できます。',
+    'step-3': { title: '隠すキーワードを選択', desc: 'まずは推奨キーワードを選んで開始。ページから候補を抽出して、実際の個人情報を隠すのが効果的です。' },
+    'note-3': 'ページ上のあなたの実名・住所・メールなどを選択することで、より確実に隠せます。',
 
     'step-4': { title: 'オプション設定', desc: '便利な機能を設定できます。' },
     'option-ignorecase': { label: '大文字小文字を区別しない', desc: '「Email」「email」「EMAIL」など、大文字小文字のバリエーションも隠す' },
@@ -63,8 +63,8 @@ const TEXT = {
     'scene-sns': { name: 'SNS / Streaming', desc: 'Online friends or video streaming' },
     'note-2': 'Recommended keywords change by scene. You can modify them later.',
 
-    'step-3': { title: 'Select keywords to hide', desc: 'Selected keywords will be added to your default profile.' },
-    'note-3': 'You can add/remove them later.',
+    'step-3': { title: 'Select keywords to hide', desc: 'Start with recommended keywords. For best results, use "Suggest from page" to extract your actual personal data.' },
+    'note-3': 'Select your real name, address, email from the page content for maximum protection.',
 
     'step-4': { title: 'Optional Features', desc: 'Configure helpful features.' },
     'option-ignorecase': { label: 'Ignore case', desc: 'Hide variations like "Email", "email", "EMAIL"' },
