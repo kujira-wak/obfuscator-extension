@@ -5,8 +5,14 @@ const isJa = navigator.language.startsWith('ja');
 const INPUT_FIELDS = {
   ja: {
     work: [
+      { key: 'name', label: '名前', placeholder: '例: 山田太郎' },
       { key: 'employee_id', label: '社員ID', placeholder: '例: E12345' },
-      { key: 'company', label: '会社名', placeholder: '例: 株式会社○○' },
+      { key: 'password', label: 'パスワード', placeholder: '例: MyP@ssw0rd' },
+      { key: 'salary', label: '給与', placeholder: '例: ¥500,000' },
+      { key: 'ssn', label: 'SSN', placeholder: '例: 123-45-6789' },
+      { key: 'account_number', label: '口座番号', placeholder: '例: 1234-5678-9012' },
+      { key: 'customer_name', label: '顧客名', placeholder: '例: 株式会社○○' },
+      { key: 'company', label: '会社名', placeholder: '例: 株式会社△△' },
       { key: 'project', label: 'プロジェクト名', placeholder: '例: Project Alpha' },
     ],
     sns: [
@@ -18,14 +24,23 @@ const INPUT_FIELDS = {
       { key: 'given_katakana', label: '名前（カタカナ）', placeholder: '例: タロウ' },
       { key: 'romaji', label: 'ローマ字', placeholder: '例: Yamada Taro' },
       { key: 'email', label: 'メールアドレス', placeholder: '例: yamada@example.com' },
-      { key: 'address', label: '住所', placeholder: '例: 東京都渋谷区' },
       { key: 'phone', label: '電話番号', placeholder: '例: 090-1234-5678' },
+      { key: 'address', label: '住所', placeholder: '例: 東京都渋谷区' },
+      { key: 'sns_id', label: 'SNS ID', placeholder: '例: @yamada_taro' },
+      { key: 'account_number_sns', label: 'アカウント番号', placeholder: '例: 123456789' },
+      { key: 'birthday', label: '誕生日', placeholder: '例: 1990-01-15' },
     ]
   },
   en: {
     work: [
+      { key: 'name', label: 'Name', placeholder: 'e.g., John Smith' },
       { key: 'employee_id', label: 'Employee ID', placeholder: 'e.g., E12345' },
-      { key: 'company', label: 'Company Name', placeholder: 'e.g., Acme Inc' },
+      { key: 'password', label: 'Password', placeholder: 'e.g., MyP@ssw0rd' },
+      { key: 'salary', label: 'Salary', placeholder: 'e.g., $100,000' },
+      { key: 'ssn', label: 'SSN', placeholder: 'e.g., 123-45-6789' },
+      { key: 'account_number', label: 'Account Number', placeholder: 'e.g., 1234-5678-9012' },
+      { key: 'customer_name', label: 'Customer Name', placeholder: 'e.g., Acme Corp' },
+      { key: 'company', label: 'Company Name', placeholder: 'e.g., Tech Inc' },
       { key: 'project', label: 'Project Name', placeholder: 'e.g., Project Alpha' },
     ],
     sns: [
@@ -35,7 +50,9 @@ const INPUT_FIELDS = {
       { key: 'email', label: 'Email', placeholder: 'e.g., john@example.com' },
       { key: 'phone', label: 'Phone', placeholder: 'e.g., +1-555-1234' },
       { key: 'address', label: 'Address', placeholder: 'e.g., 123 Main St' },
-      { key: 'birthday', label: 'Birthday', placeholder: 'e.g., Jan 1' },
+      { key: 'sns_id', label: 'Social Media ID', placeholder: 'e.g., @johnsmith' },
+      { key: 'account_number_sns', label: 'Account Number', placeholder: 'e.g., 123456789' },
+      { key: 'birthday', label: 'Birthday', placeholder: 'e.g., Jan 15' },
     ]
   }
 };
