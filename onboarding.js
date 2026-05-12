@@ -274,3 +274,15 @@ renderStep4();
 renderStep5();
 updateUI();
 
+// Event listeners (CSP compliant - no inline handlers)
+document.getElementById('btnSkip').addEventListener('click', skipAll);
+document.getElementById('btnNext1').addEventListener('click', nextStep);
+document.getElementById('btnNext2').addEventListener('click', nextStep);
+document.getElementById('btnNext3').addEventListener('click', nextStep);
+document.getElementById('btnNext4').addEventListener('click', nextStep);
+document.getElementById('btnBack2').addEventListener('click', prevStep);
+document.getElementById('btnBack3').addEventListener('click', prevStep);
+document.getElementById('btnBack4').addEventListener('click', prevStep);
+document.getElementById('btnBack5').addEventListener('click', prevStep);
+document.getElementById('btnFinish').addEventListener('click', finish);
+
