@@ -133,11 +133,31 @@
   function animLoop(ts) {
     if (ts - lastTick >= INTERVAL) {
       lastTick = ts;
+      
+      // メインドキュメントのスパン更新
       for (const span of document.querySelectorAll('[data-obf-span="true"]')) {
         const orig = span.getAttribute('data-obf-orig') ?? '';
         span.textContent = [...orig].map(ch =>
           (ch === ' ' || ch === '\u3000') ? ch : randomChar(ch)
         ).join('');
+      }
+      
+      // フレーム内のスパン更新
+      const frames = document.querySelectorAll('frame, iframe');
+      for (const frame of frames) {
+        try {
+          const framedoc = frame.contentDocument;
+          if (framedoc) {
+            for (const span of framedoc.querySelectorAll('[data-obf-span="true"]')) {
+              const orig = span.getAttribute('data-obf-orig') ?? '';
+              span.textContent = [...orig].map(ch =>
+                (ch === ' ' || ch === '\u3000') ? ch : randomChar(ch)
+              ).join('');
+            }
+          }
+        } catch {
+          // クロスオリジン or アクセス不可 → スキップ
+        }
       }
     }
     rafId = requestAnimationFrame(animLoop);
@@ -146,8 +166,25 @@
   function startAnimation() { if (rafId == null) rafId = requestAnimationFrame(animLoop); }
   function stopAnimation()  { if (rafId != null) { cancelAnimationFrame(rafId); rafId = null; } }
 
+  // ── フレーム内への処理適用 ─────────────────────────────────
+  function applyToFrames(targets, ignoreCase = false) {
+    const frames = document.querySelectorAll('frame, iframe');
+    for (const frame of frames) {
+      try {
+        const framedoc = frame.contentDocument;
+        if (framedoc && framedoc.body) {
+          wrapTargets(framedoc.body, targets, ignoreCase);
+          startObserverForFrame(framedoc, targets, ignoreCase);
+        }
+      } catch {
+        // クロスオリジン or アクセス不可 → スキップ
+      }
+    }
+  }
+
   // ── MutationObserver（デバウンス付き）─────────────────────
-  let observer = null, observerPaused = false;
+  let observer = null, frameObservers = new Map();
+  let observerPaused = false;
   let debounceTimer = null, pendingNodes = [];
 
   function pauseObserver()  { observerPaused = true;  }
@@ -175,8 +212,31 @@
     observer.observe(document.body, { childList: true, subtree: true });
   }
 
+  function startObserverForFrame(framedoc, targets, ignoreCase = false) {
+    if (!framedoc.body) return;
+    const key = framedoc.defaultView?.location?.href ?? 'unknown';
+    if (frameObservers.has(key)) {
+      frameObservers.get(key).disconnect();
+    }
+    const frameObs = new MutationObserver(mutations => {
+      if (observerPaused) return;
+      for (const m of mutations) {
+        for (const node of m.addedNodes) {
+          if (node.nodeType === Node.ELEMENT_NODE && framedoc.contains(node))
+            wrapTargets(node, targets, ignoreCase);
+          if (node.nodeType === Node.TEXT_NODE && node.parentElement && framedoc.contains(node.parentElement))
+            wrapTargets(node.parentElement, targets, ignoreCase);
+        }
+      }
+    });
+    frameObs.observe(framedoc.body, { childList: true, subtree: true });
+    frameObservers.set(key, frameObs);
+  }
+
   function stopObserver() {
     if (observer) { observer.disconnect(); observer = null; }
+    for (const obs of frameObservers.values()) { obs.disconnect(); }
+    frameObservers.clear();
     clearTimeout(debounceTimer); pendingNodes = [];
   }
 
@@ -198,6 +258,7 @@
     if (settings?.enabled === false || !targets.length) return;
 
     wrapTargets(document.body, targets, ignoreCase);
+    applyToFrames(targets, ignoreCase);
     startAnimation();
     startObserver(targets, ignoreCase);
   }
