@@ -2,6 +2,44 @@
 
 const isJa = navigator.language.startsWith('ja');
 
+const INPUT_FIELDS = {
+  ja: {
+    work: [
+      { key: 'employee_id', label: '社員ID', placeholder: '例: E12345' },
+      { key: 'company', label: '会社名', placeholder: '例: 株式会社○○' },
+      { key: 'project', label: 'プロジェクト名', placeholder: '例: Project Alpha' },
+    ],
+    sns: [
+      { key: 'surname', label: '苗字', placeholder: '例: 山田' },
+      { key: 'given_name', label: '名前', placeholder: '例: 太郎' },
+      { key: 'surname_hiragana', label: '苗字（ひらがな）', placeholder: '例: やまだ' },
+      { key: 'given_hiragana', label: '名前（ひらがな）', placeholder: '例: たろう' },
+      { key: 'surname_katakana', label: '苗字（カタカナ）', placeholder: '例: ヤマダ' },
+      { key: 'given_katakana', label: '名前（カタカナ）', placeholder: '例: タロウ' },
+      { key: 'romaji', label: 'ローマ字', placeholder: '例: Yamada Taro' },
+      { key: 'email', label: 'メールアドレス', placeholder: '例: yamada@example.com' },
+      { key: 'address', label: '住所', placeholder: '例: 東京都渋谷区' },
+      { key: 'phone', label: '電話番号', placeholder: '例: 090-1234-5678' },
+    ]
+  },
+  en: {
+    work: [
+      { key: 'employee_id', label: 'Employee ID', placeholder: 'e.g., E12345' },
+      { key: 'company', label: 'Company Name', placeholder: 'e.g., Acme Inc' },
+      { key: 'project', label: 'Project Name', placeholder: 'e.g., Project Alpha' },
+    ],
+    sns: [
+      { key: 'last_name', label: 'Last Name', placeholder: 'e.g., Smith' },
+      { key: 'first_name', label: 'First Name', placeholder: 'e.g., John' },
+      { key: 'username', label: 'Username', placeholder: 'e.g., jsmith' },
+      { key: 'email', label: 'Email', placeholder: 'e.g., john@example.com' },
+      { key: 'phone', label: 'Phone', placeholder: 'e.g., +1-555-1234' },
+      { key: 'address', label: 'Address', placeholder: 'e.g., 123 Main St' },
+      { key: 'birthday', label: 'Birthday', placeholder: 'e.g., Jan 1' },
+    ]
+  }
+};
+
 const RECOMMENDED_KEYWORDS = {
   ja: {
     work: [
@@ -34,8 +72,8 @@ const TEXT = {
     'scene-sns': { name: 'SNS・配信向け', desc: 'ネット友達や動画配信など' },
     'note-2': 'シーンに応じて推奨キーワードが変わります。後から変更できます。',
 
-    'step-3': { title: '隠すキーワードを選択', desc: 'まずは推奨キーワードを選んで開始。ページから候補を抽出して、実際の個人情報を隠すのが効果的です。' },
-    'note-3': 'ページ上のあなたの実名・住所・メールなどを選択することで、より確実に隠せます。',
+    'step-3': { title: 'あなたの情報を入力', desc: 'スクリーン共有時に隠したいあなたの情報を入力してください。' },
+    'note-3': '後から追加・削除・変更できます。空欄でも大丈夫です。',
 
     'step-4': { title: 'オプション設定', desc: '便利な機能を設定できます。' },
     'option-ignorecase': { label: '大文字小文字を区別しない', desc: '「Email」「email」「EMAIL」など、大文字小文字のバリエーションも隠す' },
@@ -63,8 +101,8 @@ const TEXT = {
     'scene-sns': { name: 'SNS / Streaming', desc: 'Online friends or video streaming' },
     'note-2': 'Recommended keywords change by scene. You can modify them later.',
 
-    'step-3': { title: 'Select keywords to hide', desc: 'Start with recommended keywords. For best results, use "Suggest from page" to extract your actual personal data.' },
-    'note-3': 'Select your real name, address, email from the page content for maximum protection.',
+    'step-3': { title: 'Enter your information', desc: 'Enter the personal information you want to hide during screen sharing.' },
+    'note-3': 'You can add, remove or change this anytime. Empty fields are fine.',
 
     'step-4': { title: 'Optional Features', desc: 'Configure helpful features.' },
     'option-ignorecase': { label: 'Ignore case', desc: 'Hide variations like "Email", "email", "EMAIL"' },
@@ -147,7 +185,7 @@ function renderStep2() {
     card.addEventListener('click', () => {
       selectedScene = scene.id;
       selectedKeywords.clear();
-      renderStep2();
+      renderStep3();
     });
     container.appendChild(card);
   });
@@ -161,26 +199,56 @@ function renderStep3() {
   const note3 = document.getElementById('note-3');
   if (note3) note3.textContent = t['note-3'];
 
-  const keywords = RECOMMENDED_KEYWORDS[isJa ? 'ja' : 'en'][selectedScene];
   const grid = document.getElementById('keywordGrid');
   if (!grid) return;
   grid.innerHTML = '';
+
+  const fields = INPUT_FIELDS[isJa ? 'ja' : 'en'][selectedScene] || [];
   
-  keywords.forEach(keyword => {
-    const chip = document.createElement('div');
-    chip.className = 'keyword-chip';
-    if (selectedKeywords.has(keyword)) chip.classList.add('selected');
-    chip.textContent = keyword;
-    chip.addEventListener('click', () => {
-      if (selectedKeywords.has(keyword)) {
-        selectedKeywords.delete(keyword);
-        chip.classList.remove('selected');
-      } else {
-        selectedKeywords.add(keyword);
-        chip.classList.add('selected');
-      }
+  fields.forEach(field => {
+    const container = document.createElement('div');
+    container.style.marginBottom = '12px';
+    
+    const label = document.createElement('label');
+    label.style.display = 'block';
+    label.style.fontSize = '12px';
+    label.style.color = '#ccc';
+    label.style.marginBottom = '4px';
+    label.style.fontWeight = '500';
+    label.textContent = field.label;
+    
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = field.placeholder;
+    input.className = 'keyword-input';
+    input.style.width = '100%';
+    input.style.background = '#2c2c2c';
+    input.style.color = '#fff';
+    input.style.border = 'none';
+    input.style.borderRadius = '5px';
+    input.style.padding = '8px 10px';
+    input.style.fontSize = '12px';
+    input.style.fontFamily = 'inherit';
+    input.style.boxSizing = 'border-box';
+    input.style.outline = 'none';
+    input.value = selectedKeywords.has(field.key) ? Array.from(selectedKeywords).find(k => k.startsWith(field.key + ':'))?.split(':')[1] || '' : '';
+    
+    input.addEventListener('input', () => {
+      const text = input.value.trim();
+      const key = field.key + ':' + text;
+      
+      // 同じフィールドの古いキーを削除
+      selectedKeywords.forEach(k => {
+        if (k.startsWith(field.key + ':')) selectedKeywords.delete(k);
+      });
+      
+      // 新しい値を追加
+      if (text) selectedKeywords.add(key);
     });
-    grid.appendChild(chip);
+    
+    container.appendChild(label);
+    container.appendChild(input);
+    grid.appendChild(container);
   });
 }
 
@@ -278,8 +346,19 @@ async function skipAll() {
 }
 
 async function finish() {
+  // selectedKeywords から "field:value" 形式の値を抽出
+  const keywords = Array.from(selectedKeywords)
+    .map(k => {
+      const parts = k.split(':');
+      if (parts.length > 1) {
+        return parts.slice(1).join(':'); // "field:value" から "value" を取る
+      }
+      return k; // フォールバック
+    })
+    .filter(k => k.trim().length > 0);
+
   const defaultProfile = {
-    targets: [...selectedKeywords],
+    targets: keywords,
     enabled: true,
     ignoreCase: options.ignoreCase
   };
