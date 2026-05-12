@@ -48,6 +48,8 @@ const TEXT = {
     'li-5-3': 'ホットキー（Ctrl+Shift+O）で素早くON/OFF',
     'li-5-4': '画面共有前に忘れず有効化してください',
     'note-5': 'より詳しい情報は README.md をご覧ください。',
+    
+    'skip-confirm': 'Setup をスキップしますか？\n後からポップアップで設定できます。',
   },
   en: {
     'step-1': { title: 'Welcome!', desc: 'Automatically hide sensitive information during screen sharing or recording.' },
@@ -75,6 +77,8 @@ const TEXT = {
     'li-5-3': 'Use hotkey (Ctrl+Shift+O) for quick toggle',
     'li-5-4': 'Remember to enable before screen sharing',
     'note-5': 'See README.md for more detailed information.',
+    
+    'skip-confirm': 'Skip setup now? You can configure it later in the popup.',
   }
 };
 
@@ -224,7 +228,7 @@ function prevStep() {
 }
 
 async function skipAll() {
-  if (confirm('Setup をスキップしますか？\n後からポップアップで設定できます。')) {
+  if (confirm(t['skip-confirm'])) {
     const settings = {
       profiles: {
         default: { targets: [], enabled: true, ignoreCase: false },
