@@ -214,6 +214,36 @@ function applyMask() {
   syncPreview();
 }
 
+let autoApplyTimer = null;
+
+function triggerAutoApply() {
+  clearTimeout(autoApplyTimer);
+  autoApplyTimer = setTimeout(async () => {
+    stashCurrentProfile();
+    const profile = getCurrentProfile();
+    const targets = profile.ignoreCase
+      ? [...new Map(profile.targets.map(t => [t.toLowerCase(), t])).values()].slice(0, MAX_WORDS)
+      : [...new Set(profile.targets)].slice(0, MAX_WORDS);
+    const settings = {
+      profiles: {
+        ...clone(profileDrafts),
+        [currentProfileId]: {
+          targets,
+          enabled: enableToggle.checked,
+          ignoreCase: ignoreCaseToggle.checked,
+        },
+      },
+    };
+
+    try {
+      await CryptoUtils.saveSettings(settings);
+      await applySettingsToTab(settings.profiles[currentProfileId]);
+    } catch {
+      // エラーサイレント（ユーザー体験を損なわないよう）
+    }
+  }, 300);
+}
+
 function addWordRow(value = '', focus = true) {
   if (wordsList.children.length >= MAX_WORDS) {
     showStatus(T.tooMany);
@@ -231,13 +261,20 @@ function addWordRow(value = '', focus = true) {
   input.value = value;
   input.maxLength = 100;
   input.setAttribute('aria-label', isJa ? '文字化けさせる単語' : 'Word to obfuscate');
-  input.addEventListener('input', syncPreview);
+  input.addEventListener('input', () => {
+    syncPreview();
+    triggerAutoApply();
+  });
 
   const rm = document.createElement('button');
   rm.className = 'rm';
   rm.textContent = '×';
   rm.setAttribute('aria-label', isJa ? '削除' : 'Remove');
-  rm.addEventListener('click', () => { row.remove(); syncPreview(); });
+  rm.addEventListener('click', () => {
+    row.remove();
+    syncPreview();
+    triggerAutoApply();
+  });
 
   row.append(input, rm);
   wordsList.appendChild(row);
@@ -328,6 +365,9 @@ async function applySettingsToTab(settings) {
 }
 
 addBtn.addEventListener('click', () => addWordRow('', true));
+
+enableToggle.addEventListener('change', triggerAutoApply);
+ignoreCaseToggle.addEventListener('change', triggerAutoApply);
 
 profileSelect.addEventListener('change', () => switchProfile(profileSelect.value));
 maskBtn.addEventListener('click', () => { masked = !masked; applyMask(); });
