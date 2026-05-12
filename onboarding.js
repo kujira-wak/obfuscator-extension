@@ -94,30 +94,45 @@ let options = {
 function updateUI() {
   const totalSteps = 5;
   const progress = (currentStep / totalSteps) * 100;
-  document.getElementById('progressBar').style.width = progress + '%';
-  document.getElementById('stepIndicator').textContent = `Step ${currentStep} of ${totalSteps}`;
+  const progressBar = document.getElementById('progressBar');
+  if (progressBar) progressBar.style.width = progress + '%';
+  
+  const stepIndicator = document.getElementById('stepIndicator');
+  if (stepIndicator) stepIndicator.textContent = `Step ${currentStep} of ${totalSteps}`;
 
   for (let i = 1; i <= totalSteps; i++) {
-    document.getElementById(`step-${i}`).classList.remove('active');
+    const step = document.getElementById(`step-${i}`);
+    if (step) step.classList.remove('active');
   }
-  document.getElementById(`step-${currentStep}`).classList.add('active');
+  const currentStepEl = document.getElementById(`step-${currentStep}`);
+  if (currentStepEl) currentStepEl.classList.add('active');
 }
 
 function renderStep1() {
-  document.getElementById('title-1').textContent = t['step-1'].title;
-  document.getElementById('desc-1').textContent = t['step-1'].desc;
-  document.getElementById('li-1-1').textContent = t['li-1-1'];
-  document.getElementById('li-1-2').textContent = t['li-1-2'];
-  document.getElementById('li-1-3').textContent = t['li-1-3'];
-  document.getElementById('note-1').textContent = t['note-1'];
+  const title1 = document.getElementById('title-1');
+  if (title1) title1.textContent = t['step-1'].title;
+  const desc1 = document.getElementById('desc-1');
+  if (desc1) desc1.textContent = t['step-1'].desc;
+  const li11 = document.getElementById('li-1-1');
+  if (li11) li11.textContent = t['li-1-1'];
+  const li12 = document.getElementById('li-1-2');
+  if (li12) li12.textContent = t['li-1-2'];
+  const li13 = document.getElementById('li-1-3');
+  if (li13) li13.textContent = t['li-1-3'];
+  const note1 = document.getElementById('note-1');
+  if (note1) note1.textContent = t['note-1'];
 }
 
 function renderStep2() {
-  document.getElementById('title-2').textContent = t['step-2'].title;
-  document.getElementById('desc-2').textContent = t['step-2'].desc;
-  document.getElementById('note-2').textContent = t['note-2'];
+  const title2 = document.getElementById('title-2');
+  if (title2) title2.textContent = t['step-2'].title;
+  const desc2 = document.getElementById('desc-2');
+  if (desc2) desc2.textContent = t['step-2'].desc;
+  const note2 = document.getElementById('note-2');
+  if (note2) note2.textContent = t['note-2'];
 
   const container = document.getElementById('sceneOptions');
+  if (!container) return;
   container.innerHTML = '';
   
   const scenes = [
@@ -129,22 +144,26 @@ function renderStep2() {
     const card = document.createElement('div');
     card.className = 'scene-card' + (selectedScene === scene.id ? ' selected' : '');
     card.innerHTML = `<h3>${scene.label}</h3><p>${scene.desc}</p>`;
-    card.onclick = () => {
+    card.addEventListener('click', () => {
       selectedScene = scene.id;
       selectedKeywords.clear();
       renderStep2();
-    };
+    });
     container.appendChild(card);
   });
 }
 
 function renderStep3() {
-  document.getElementById('title-3').textContent = t['step-3'].title;
-  document.getElementById('desc-3').textContent = t['step-3'].desc;
-  document.getElementById('note-3').textContent = t['note-3'];
+  const title3 = document.getElementById('title-3');
+  if (title3) title3.textContent = t['step-3'].title;
+  const desc3 = document.getElementById('desc-3');
+  if (desc3) desc3.textContent = t['step-3'].desc;
+  const note3 = document.getElementById('note-3');
+  if (note3) note3.textContent = t['note-3'];
 
   const keywords = RECOMMENDED_KEYWORDS[isJa ? 'ja' : 'en'][selectedScene];
   const grid = document.getElementById('keywordGrid');
+  if (!grid) return;
   grid.innerHTML = '';
   
   keywords.forEach(keyword => {
@@ -152,7 +171,7 @@ function renderStep3() {
     chip.className = 'keyword-chip';
     if (selectedKeywords.has(keyword)) chip.classList.add('selected');
     chip.textContent = keyword;
-    chip.onclick = () => {
+    chip.addEventListener('click', () => {
       if (selectedKeywords.has(keyword)) {
         selectedKeywords.delete(keyword);
         chip.classList.remove('selected');
@@ -160,17 +179,21 @@ function renderStep3() {
         selectedKeywords.add(keyword);
         chip.classList.add('selected');
       }
-    };
+    });
     grid.appendChild(chip);
   });
 }
 
 function renderStep4() {
-  document.getElementById('title-4').textContent = t['step-4'].title;
-  document.getElementById('desc-4').textContent = t['step-4'].desc;
-  document.getElementById('note-4').textContent = t['note-4'];
+  const title4 = document.getElementById('title-4');
+  if (title4) title4.textContent = t['step-4'].title;
+  const desc4 = document.getElementById('desc-4');
+  if (desc4) desc4.textContent = t['step-4'].desc;
+  const note4 = document.getElementById('note-4');
+  if (note4) note4.textContent = t['note-4'];
 
   const group = document.getElementById('optionsGroup');
+  if (!group) return;
   group.innerHTML = '';
 
   const optionsList = [
@@ -188,21 +211,31 @@ function renderStep4() {
         <span class="desc">${opt.desc}</span>
       </span>
     `;
-    item.querySelector('input').onchange = (e) => {
-      options[opt.key] = e.target.checked;
-    };
+    const input = item.querySelector('input');
+    if (input) {
+      input.addEventListener('change', (e) => {
+        options[opt.key] = e.target.checked;
+      });
+    }
     group.appendChild(item);
   });
 }
 
 function renderStep5() {
-  document.getElementById('title-5').textContent = t['step-5'].title;
-  document.getElementById('desc-5').textContent = t['step-5'].desc;
-  document.getElementById('li-5-1').textContent = t['li-5-1'];
-  document.getElementById('li-5-2').textContent = t['li-5-2'];
-  document.getElementById('li-5-3').textContent = t['li-5-3'];
-  document.getElementById('li-5-4').textContent = t['li-5-4'];
-  document.getElementById('note-5').textContent = t['note-5'];
+  const title5 = document.getElementById('title-5');
+  if (title5) title5.textContent = t['step-5'].title;
+  const desc5 = document.getElementById('desc-5');
+  if (desc5) desc5.textContent = t['step-5'].desc;
+  const li51 = document.getElementById('li-5-1');
+  if (li51) li51.textContent = t['li-5-1'];
+  const li52 = document.getElementById('li-5-2');
+  if (li52) li52.textContent = t['li-5-2'];
+  const li53 = document.getElementById('li-5-3');
+  if (li53) li53.textContent = t['li-5-3'];
+  const li54 = document.getElementById('li-5-4');
+  if (li54) li54.textContent = t['li-5-4'];
+  const note5 = document.getElementById('note-5');
+  if (note5) note5.textContent = t['note-5'];
 }
 
 function nextStep() {
@@ -275,14 +308,24 @@ renderStep5();
 updateUI();
 
 // Event listeners (CSP compliant - no inline handlers)
-document.getElementById('btnSkip').addEventListener('click', skipAll);
-document.getElementById('btnNext1').addEventListener('click', nextStep);
-document.getElementById('btnNext2').addEventListener('click', nextStep);
-document.getElementById('btnNext3').addEventListener('click', nextStep);
-document.getElementById('btnNext4').addEventListener('click', nextStep);
-document.getElementById('btnBack2').addEventListener('click', prevStep);
-document.getElementById('btnBack3').addEventListener('click', prevStep);
-document.getElementById('btnBack4').addEventListener('click', prevStep);
-document.getElementById('btnBack5').addEventListener('click', prevStep);
-document.getElementById('btnFinish').addEventListener('click', finish);
+const btnSkip = document.getElementById('btnSkip');
+if (btnSkip) btnSkip.addEventListener('click', skipAll);
+const btnNext1 = document.getElementById('btnNext1');
+if (btnNext1) btnNext1.addEventListener('click', nextStep);
+const btnNext2 = document.getElementById('btnNext2');
+if (btnNext2) btnNext2.addEventListener('click', nextStep);
+const btnNext3 = document.getElementById('btnNext3');
+if (btnNext3) btnNext3.addEventListener('click', nextStep);
+const btnNext4 = document.getElementById('btnNext4');
+if (btnNext4) btnNext4.addEventListener('click', nextStep);
+const btnBack2 = document.getElementById('btnBack2');
+if (btnBack2) btnBack2.addEventListener('click', prevStep);
+const btnBack3 = document.getElementById('btnBack3');
+if (btnBack3) btnBack3.addEventListener('click', prevStep);
+const btnBack4 = document.getElementById('btnBack4');
+if (btnBack4) btnBack4.addEventListener('click', prevStep);
+const btnBack5 = document.getElementById('btnBack5');
+if (btnBack5) btnBack5.addEventListener('click', prevStep);
+const btnFinish = document.getElementById('btnFinish');
+if (btnFinish) btnFinish.addEventListener('click', finish);
 
